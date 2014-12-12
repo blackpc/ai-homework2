@@ -28,6 +28,46 @@
 
 #include <ai-homework2/GoGame.h>
 
-GoGame::GoGame() {
+
+GoGame::GoGame(const Board& board, Turn turn)
+    : board_(board) {
+    turn_ = turn;
 }
 
+inline Board::Cell GoGame::turnToCell(Turn turn) const {
+    if (turn == GoGame::TurnBlack)
+        return Board::CellBlack;
+
+    if (turn == GoGame::TurnWhite)
+        return Board::CellWhite;
+
+    throw new string("Illegal turn type");
+}
+
+set<Board::CellPoint> GoGame::getAvailableMoves() const {
+    set<Board::CellPoint> moves;
+
+    for (uint8_t y = 0; y < board_.getHeight(); ++y) {
+        for (uint8_t x = 0; x < board_.getWidth(); ++x) {
+            const Board::Cell& cell = board_.getCell(x, y);
+
+            if (cell != Board::CellEmpty) {
+                // Check all 4 neighbors
+                // If empty, add to the list
+                if (board_.isInBounds(x + 1, y) && board_.isEmpty(x + 1, y))
+                    moves.insert(Board::CellPoint(x + 1, y, turnToCell(turn_)));
+
+                if (board_.isInBounds(x - 1, y) && board_.isEmpty(x - 1, y))
+                    moves.insert(Board::CellPoint(x - 1, y, turnToCell(turn_)));
+
+                if (board_.isInBounds(x, y + 1) && board_.isEmpty(x, y + 1))
+                    moves.insert(Board::CellPoint(x, y + 1, turnToCell(turn_)));
+
+                if (board_.isInBounds(x, y - 1) && board_.isEmpty(x, y - 1))
+                    moves.insert(Board::CellPoint(x, y - 1, turnToCell(turn_)));
+            }
+        }
+    }
+
+    return moves;
+}

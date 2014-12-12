@@ -27,13 +27,27 @@
  */
 
 
-#include <iostream>
+#include <ai-homework2/Board.h>
 
 
 using namespace std;
 
 
+void testBoard() {
+    Board board(7, 7);
+    cout << "Empty board:" << endl;
+    cout << board.toString() << endl << endl;;
+
+    board.setCell(0, 0, Board::CellWhite);
+    board.setCell(0, 1, Board::CellBlack);
+
+    cout << "Black and white chips:" << endl;
+    cout << board.toString() << endl << endl;
+}
+
 int main(int argc, char **argv) {
+    testBoard();
+
 	return 1;
 }
 

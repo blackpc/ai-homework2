@@ -29,5 +29,91 @@
 #include <ai-homework2/Board.h>
 
 Board::Board(uint8_t width, uint8_t height) {
+    width_ = width;
+    height_ = height;
+
+    boardArray_.resize(width * height, Board::CellEmpty);
+    assert(boardArray_.size() == width * height);
 }
 
+void Board::setCell(uint8_t x, uint8_t y, Cell cell) {
+    boardArray_[width_ * y + x] = cell;
+}
+
+void Board::setCell(const Point& point, Cell cell) {
+    setCell(point.x, point.y, cell);
+}
+
+void Board::setCell(const CellPoint& cellPoint) {
+    setCell(cellPoint.point.x, cellPoint.point.y, cellPoint.cellValue);
+}
+
+bool Board::isEmpty(uint8_t x, uint8_t y) const {
+    return getCell(x, y) == Board::CellEmpty;
+}
+
+bool Board::isInBounds(uint8_t x, uint8_t y) const {
+    return x >= 0 && x < width_ &&
+           y >= 0 && y < height_;
+}
+
+bool Board::isInBounds(const Point& point) const {
+    return isInBounds(point.x, point.y);
+}
+
+const string Board::cellToString(Cell cell) const {
+    if (cell == Board::CellBlack)
+        return "B";
+
+    if (cell == Board::CellWhite)
+        return "W";
+
+    if (cell == Board::CellEmpty)
+        return "E";
+
+    throw new string("Invalid cell value");
+}
+
+uint32_t Board::getBlackCellsCount() const {
+    uint32_t counter = 0;
+
+    for (size_t i = 0; i < boardArray_.size(); ++i)
+        if (boardArray_[i] == Board::CellBlack)
+            counter++;
+
+    return counter;
+}
+
+uint32_t Board::getWhiteCellsCount() const {
+    uint32_t counter = 0;
+
+    for (size_t i = 0; i < boardArray_.size(); ++i)
+        if (boardArray_[i] == Board::CellWhite)
+            counter++;
+
+    return counter;
+}
+
+uint32_t Board::getEmptyCellsCount() const {
+    uint32_t counter = 0;
+
+    for (size_t i = 0; i < boardArray_.size(); ++i)
+        if (boardArray_[i] == Board::CellEmpty)
+            counter++;
+
+    return counter;
+}
+
+const string Board::toString() const {
+    stringstream stream;
+
+    for (int y = 0; y < height_; ++y) {
+        for (int x = 0; x < width_; ++x) {
+            const string& cellString = cellToString(getCell(x, y));
+            stream << cellString;
+        }
+        stream << endl;
+    }
+
+    return stream.str();
+}

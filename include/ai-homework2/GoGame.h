@@ -29,12 +29,75 @@
 #ifndef INCLUDE_AI_HOMEWORK2_GOGAME_H_
 #define INCLUDE_AI_HOMEWORK2_GOGAME_H_
 
+
+#include <set>
+
+#include <ai-homework2/Board.h>
+
+
+using namespace std;
+
+
 /*
- *
+ * Go game
  */
 class GoGame {
+
 public:
-	GoGame();
+
+    /**
+     * Represents whose turn
+     */
+    enum Turn {
+        TurnBlack,
+        TurnWhite
+    };
+
+public:
+
+    /**
+     * Initializes the game with specified board and turn ownership
+     * @param board
+     * @param turn
+     */
+	GoGame(const Board& board, Turn turn = GoGame::TurnBlack);
+
+public:
+
+	/**
+	 * Gets the game board
+	 * @return
+	 */
+	inline const Board& getBoard() const {
+	    return board_;
+	}
+
+	/**
+	 * Returns whose the turn
+	 * @return
+	 */
+	inline Turn getTurn() const {
+	    return turn_;
+	}
+
+	/**
+	 * Converts turn enum to @see Board::Cell enum
+	 * @param turn
+	 * @return
+	 */
+	inline Board::Cell turnToCell(Turn turn) const;
+
+	/**
+	 * Returns all available moves for current player
+	 * @return
+	 */
+	set<Board::CellPoint> getAvailableMoves() const;
+
+private:
+
+	Turn turn_;
+	Board board_;
+
 };
 
 #endif /* INCLUDE_AI_HOMEWORK2_GOGAME_H_ */

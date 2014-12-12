@@ -33,6 +33,8 @@
 #include <iostream>
 #include <vector>
 #include <inttypes.h>
+#include <assert.h>
+#include <sstream>
 
 
 using namespace std;
@@ -49,9 +51,9 @@ public:
      * The value of a cell
      */
     enum Cell {
-        CellBlack,//!< CellBlack
-        CellWhite,//!< CellWhite
-        CellFree  //!< CellFree
+        CellBlack,
+        CellWhite,
+        CellEmpty
     };
 
     /**
@@ -67,6 +69,13 @@ public:
             this->x = x;
             this->y = y;
         }
+
+        bool operator <(const Point& other) const {
+            if (x < other.x)
+                return true;
+
+            return y < other.y;
+        }
     };
 
     /**
@@ -76,9 +85,18 @@ public:
         Cell cellValue;
         Point point;
 
-        CellPoint(Cell cell, Point point) {
+        CellPoint(Point point, Cell cell) {
             this->cellValue = cell;
             this->point = point;
+        }
+
+        CellPoint(uint8_t x, uint8_t y, Cell cell) {
+            this->point = Point(x, y);
+            this->cellValue = cell;
+        }
+
+        bool operator <(const CellPoint& other) const {
+            return this->point < other.point;
         }
     };
 
@@ -94,9 +112,111 @@ public:
 
 public:
 
-//	void setCell(Board::Cell )
+	/**
+	 * Gets the value of specified cell
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	inline Cell getCell(uint8_t x, uint8_t y) const {
+	    return boardArray_[width_ * y + x];
+	}
+
+	/**
+	 * Sets specified cell value in specified point
+	 * @param x
+	 * @param y
+	 * @param cell
+	 */
+	void setCell(uint8_t x, uint8_t y, Cell cell);
+
+	/**
+	 * Sets specified cell value in specified point
+	 * @param point
+	 * @param cell
+	 */
+	void setCell(const Point& point, Cell cell);
+
+	/**
+	 * Sets specified cell value in specified point
+	 * @param cellPoint CellPoint
+	 */
+	void setCell(const CellPoint& cellPoint);
+
+	/**
+	 * Returns true if specified cell is empty
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	bool isEmpty(uint8_t x, uint8_t y) const;
+
+	/**
+	 * Verifies that a specified point is within the board bounds
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	bool isInBounds(uint8_t x, uint8_t y) const;
+
+	/**
+	 * Verifies that a specified point is within the board bounds
+	 * @param point
+	 * @return
+	 */
+	bool isInBounds(const Point& point) const;
+
+	/**
+	 * Gets the number of black cells
+	 * @return
+	 */
+	uint32_t getBlackCellsCount() const;
+
+	/**
+	 * Gets the number of white cells
+	 * @return
+	 */
+	uint32_t getWhiteCellsCount() const;
+
+	/**
+	 * Gets the number of empty cells
+	 * @return
+	 */
+	uint32_t getEmptyCellsCount() const;
+
+	/**
+	 * Gets board width
+	 * @return
+	 */
+	inline uint8_t getWidth() const {
+	    return width_;
+	}
+
+	/**
+	 * Gets board height
+	 * @return
+	 */
+	inline uint8_t getHeight() const {
+        return height_;
+    }
+
+	/**
+	 * Returns string representation of cell
+	 * @param cell
+	 * @return
+	 */
+	const string cellToString(Cell cell) const;
+
+	/**
+	 * Returns string representation of the board
+	 * @return
+	 */
+	const string toString() const;
 
 private:
+
+	uint8_t width_;
+	uint8_t height_;
 
 	vector<Cell> boardArray_;
 
