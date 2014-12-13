@@ -60,12 +60,12 @@ public:
      * Represents x-y integer coordinates
      */
     struct Point {
-        uint8_t x;
-        uint8_t y;
+        int32_t x;
+        int32_t y;
 
         Point() : x(0), y(0) { }
 
-        Point(uint8_t x, uint8_t y) {
+        Point(int32_t x, int32_t y) {
             this->x = x;
             this->y = y;
         }
@@ -90,13 +90,19 @@ public:
             this->point = point;
         }
 
-        CellPoint(uint8_t x, uint8_t y, Cell cell) {
+        CellPoint(int32_t x, int32_t y, Cell cell) {
             this->point = Point(x, y);
             this->cellValue = cell;
         }
 
         bool operator <(const CellPoint& other) const {
             return this->point < other.point;
+        }
+
+        string toString() const {
+            stringstream stream;
+            stream << "Point [ x = " << (int)point.x << ", y = " << (int)point.y << "]";
+            return stream.str();
         }
     };
 
@@ -107,8 +113,18 @@ public:
      * @param width Board width
      * @param height Board height
      */
-	Board(uint8_t width, uint8_t height);
+	Board(int32_t width, int32_t height);
 
+	/**
+	 * Copy constructor
+	 * @param board
+	 */
+	Board(const Board& board);
+
+	/**
+	 * Deletes board array
+	 */
+	~Board();
 
 public:
 
@@ -118,8 +134,17 @@ public:
 	 * @param y
 	 * @return
 	 */
-	inline Cell getCell(uint8_t x, uint8_t y) const {
+	inline Cell getCell(int32_t x, int32_t y) const {
 	    return boardArray_[width_ * y + x];
+	}
+
+	/**
+	 * Gets the value of specified cell
+	 * @param point
+	 * @return
+	 */
+	inline Cell getCell(const Point& point) const {
+	    return getCell(point.x, point.y);
 	}
 
 	/**
@@ -128,7 +153,7 @@ public:
 	 * @param y
 	 * @param cell
 	 */
-	void setCell(uint8_t x, uint8_t y, Cell cell);
+	void setCell(int32_t x, int32_t y, Cell cell);
 
 	/**
 	 * Sets specified cell value in specified point
@@ -149,7 +174,14 @@ public:
 	 * @param y
 	 * @return
 	 */
-	bool isEmpty(uint8_t x, uint8_t y) const;
+	bool isEmpty(int32_t x, int32_t y) const;
+
+	/**
+	 * Returns true if specified cell is empty
+	 * @param point
+	 * @return
+	 */
+	bool isEmpty(const Point& point) const;
 
 	/**
 	 * Verifies that a specified point is within the board bounds
@@ -157,7 +189,7 @@ public:
 	 * @param y
 	 * @return
 	 */
-	bool isInBounds(uint8_t x, uint8_t y) const;
+	bool isInBounds(int32_t x, int32_t y) const;
 
 	/**
 	 * Verifies that a specified point is within the board bounds
@@ -188,7 +220,7 @@ public:
 	 * Gets board width
 	 * @return
 	 */
-	inline uint8_t getWidth() const {
+	inline int32_t getWidth() const {
 	    return width_;
 	}
 
@@ -196,7 +228,7 @@ public:
 	 * Gets board height
 	 * @return
 	 */
-	inline uint8_t getHeight() const {
+	inline int32_t getHeight() const {
         return height_;
     }
 
@@ -215,10 +247,10 @@ public:
 
 private:
 
-	uint8_t width_;
-	uint8_t height_;
+	int32_t width_;
+	int32_t height_;
 
-	vector<Cell> boardArray_;
+	Cell* boardArray_;
 
 };
 

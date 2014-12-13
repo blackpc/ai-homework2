@@ -28,15 +28,31 @@
 
 #include <ai-homework2/Board.h>
 
-Board::Board(uint8_t width, uint8_t height) {
+Board::Board(int32_t width, int32_t height) {
     width_ = width;
     height_ = height;
 
-    boardArray_.resize(width * height, Board::CellEmpty);
-    assert(boardArray_.size() == width * height);
+    boardArray_ = new Cell[width * height];
+
+    for (int i = 0; i < width_ * height_; ++i)
+        boardArray_[i] = Board::CellEmpty;
 }
 
-void Board::setCell(uint8_t x, uint8_t y, Cell cell) {
+Board::Board(const Board& board) {
+    this->width_ = board.width_;
+    this->height_ = board.height_;
+
+    boardArray_ = new Cell[width_ * height_];
+
+    for (int i = 0; i < width_ * height_; ++i)
+        boardArray_[i] = board.boardArray_[i];
+}
+
+Board::~Board() {
+    delete[] boardArray_;
+}
+
+void Board::setCell(int32_t x, int32_t y, Cell cell) {
     boardArray_[width_ * y + x] = cell;
 }
 
@@ -48,11 +64,16 @@ void Board::setCell(const CellPoint& cellPoint) {
     setCell(cellPoint.point.x, cellPoint.point.y, cellPoint.cellValue);
 }
 
-bool Board::isEmpty(uint8_t x, uint8_t y) const {
+bool Board::isEmpty(int32_t x, int32_t y) const {
     return getCell(x, y) == Board::CellEmpty;
 }
 
-bool Board::isInBounds(uint8_t x, uint8_t y) const {
+bool Board::isEmpty(const Point& point) const {
+    return isEmpty(point.x, point.y);
+}
+
+
+bool Board::isInBounds(int32_t x, int32_t y) const {
     return x >= 0 && x < width_ &&
            y >= 0 && y < height_;
 }
@@ -63,13 +84,13 @@ bool Board::isInBounds(const Point& point) const {
 
 const string Board::cellToString(Cell cell) const {
     if (cell == Board::CellBlack)
-        return "B";
+        return "○";
 
     if (cell == Board::CellWhite)
-        return "W";
+        return "●";
 
     if (cell == Board::CellEmpty)
-        return "E";
+        return "░";
 
     throw new string("Invalid cell value");
 }
@@ -77,7 +98,7 @@ const string Board::cellToString(Cell cell) const {
 uint32_t Board::getBlackCellsCount() const {
     uint32_t counter = 0;
 
-    for (size_t i = 0; i < boardArray_.size(); ++i)
+    for (int32_t i = 0; i < width_ * height_; ++i)
         if (boardArray_[i] == Board::CellBlack)
             counter++;
 
@@ -87,7 +108,7 @@ uint32_t Board::getBlackCellsCount() const {
 uint32_t Board::getWhiteCellsCount() const {
     uint32_t counter = 0;
 
-    for (size_t i = 0; i < boardArray_.size(); ++i)
+    for (int32_t i = 0; i < width_ * height_; ++i)
         if (boardArray_[i] == Board::CellWhite)
             counter++;
 
@@ -97,7 +118,7 @@ uint32_t Board::getWhiteCellsCount() const {
 uint32_t Board::getEmptyCellsCount() const {
     uint32_t counter = 0;
 
-    for (size_t i = 0; i < boardArray_.size(); ++i)
+    for (int32_t i = 0; i < width_ * height_; ++i)
         if (boardArray_[i] == Board::CellEmpty)
             counter++;
 
@@ -110,7 +131,7 @@ const string Board::toString() const {
     for (int y = 0; y < height_; ++y) {
         for (int x = 0; x < width_; ++x) {
             const string& cellString = cellToString(getCell(x, y));
-            stream << cellString;
+            stream << cellString << " ";
         }
         stream << endl;
     }

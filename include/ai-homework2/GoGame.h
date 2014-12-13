@@ -49,8 +49,8 @@ public:
      * Represents whose turn
      */
     enum Turn {
-        TurnBlack,
-        TurnWhite
+        TurnBlack = 0,
+        TurnWhite = 1
     };
 
 public:
@@ -61,6 +61,15 @@ public:
      * @param turn
      */
 	GoGame(const Board& board, Turn turn = GoGame::TurnBlack);
+
+	/**
+	 * Copy constructor
+	 * @param game
+	 */
+	inline GoGame(const GoGame& game)
+	    : board_(game.board_) {
+	    this->turn_ = game.turn_;
+	}
 
 public:
 
@@ -73,6 +82,18 @@ public:
 	}
 
 	/**
+	 * Returns true if the board is full
+	 * @return
+	 */
+	bool isFinished() const;
+
+	/**
+	 * Gets the winner side
+	 * @return
+	 */
+	string getWinner() const;
+
+	/**
 	 * Returns whose the turn
 	 * @return
 	 */
@@ -81,11 +102,16 @@ public:
 	}
 
 	/**
+	 * Switches the turn owner
+	 */
+	Turn switchTurn(Turn turn) const;
+
+	/**
 	 * Converts turn enum to @see Board::Cell enum
 	 * @param turn
 	 * @return
 	 */
-	inline Board::Cell turnToCell(Turn turn) const;
+	Board::Cell turnToCell(Turn turn) const;
 
 	/**
 	 * Returns all available moves for current player
@@ -93,10 +119,71 @@ public:
 	 */
 	set<Board::CellPoint> getAvailableMoves() const;
 
+	/**
+	 * Checks whether specified move is legal
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	bool isLegalMove(int32_t x, int32_t y) const;
+
+	/**
+	 * Checks whether specified move is legal
+	 * @param point
+	 * @return
+	 */
+	bool isLegalMove(const Board::Point& point) const;
+
+	/**
+	 * Puts a chip on the board, and changes the turn's owner
+	 * @param x
+	 * @param y
+	 */
+	void makeMove(int32_t x, int32_t y);
+
+	/**
+	 * Puts a chip on the board, and changes the turn's owner
+	 * @param point
+	 */
+	void makeMove(const Board::Point& point);
+
+	/**
+	 * Simulates a move without changes the game's state
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	GoGame simulateMove(int32_t x, int32_t y) const;
+
+	/**
+	 * Simulates a move without changes the game's state
+	 * @param point
+	 * @return A copy of the game with applied move
+	 */
+	GoGame simulateMove(const Board::Point& point) const;
+
 private:
 
 	Turn turn_;
 	Board board_;
+
+private:
+
+    /**
+     * Search for a captured chips, and switches it's color
+     * @param point
+     * @param turn Turn owner
+     */
+    void switchCapturedCells(const Board::Point& point, Turn turn);
+
+    /**
+     * Recursively goes through one direction and switches opponents chips
+     * @param point
+     * @param turn
+     * @param xIncrement
+     * @param yIncrement
+     */
+    bool switchCapturedCellsRecursive(const Board::Point& point, Turn turn, int8_t xIncrement, int8_t yIncrement);
 
 };
 

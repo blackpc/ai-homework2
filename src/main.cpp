@@ -27,26 +27,83 @@
  */
 
 
-#include <ai-homework2/Board.h>
+#include <ai-homework2/MinMaxSearch.h>
+#include <ai-homework2/MoreChipsHeuristic.h>
 
 
 using namespace std;
 
 
+void printBoard(const Board& board, const string& title) {
+    cout << title << ":" << endl;
+    cout << board.toString() << endl << endl;
+}
+
 void testBoard() {
     Board board(7, 7);
-    cout << "Empty board:" << endl;
-    cout << board.toString() << endl << endl;;
+    printBoard(board, "Empty board");
 
     board.setCell(0, 0, Board::CellWhite);
     board.setCell(0, 1, Board::CellBlack);
 
-    cout << "Black and white chips:" << endl;
-    cout << board.toString() << endl << endl;
+    printBoard(board, "Black and white chips");
+}
+
+void testCapturing() {
+    Board board(5, 5);
+    board.setCell(3, 1, Board::CellWhite);
+    board.setCell(1, 3, Board::CellWhite);
+
+    board.setCell(2, 2, Board::CellBlack);
+    board.setCell(1, 2, Board::CellBlack);
+    board.setCell(2, 1, Board::CellBlack);
+
+    GoGame game(board, GoGame::TurnWhite);
+
+    printBoard(game.getBoard(), "Before capturing (white's turn)");
+
+    GoGame clonedGame = game.simulateMove(1, 1);
+
+    printBoard(clonedGame.getBoard(), "After capturing");
+
+    printBoard(game.getBoard(), "Original game");
+}
+
+void test() {
+    Board board(5, 5);
+
+    board.setCell(0, 0, Board::CellBlack);
+    board.setCell(0, 1, Board::CellBlack);
+    board.setCell(1, 0, Board::CellWhite);
+    board.setCell(2, 0, Board::CellWhite);
+
+    GoGame game(board, GoGame::TurnBlack);
+
+    vector<GoGame> v;
+
+    for (int i = 0; i < 100; ++i) {
+        v.push_back(GoGame(board));
+    }
+}
+
+void testMinimax() {
+    Board board(3, 5);
+
+    board.setCell(1, 1, Board::CellBlack);
+    board.setCell(0, 0, Board::CellWhite);
+    board.setCell(2, 2, Board::CellWhite);
+    board.setCell(0, 1, Board::CellWhite);
+    board.setCell(2, 4, Board::CellWhite);
+
+    GoGame game(board, GoGame::TurnBlack);
+
+    MinMaxSearch minimaxSearch(new MoreChipsHeuristic());
+    cout << minimaxSearch.search(game);
 }
 
 int main(int argc, char **argv) {
-    testBoard();
+
+    testMinimax();
 
 	return 1;
 }
