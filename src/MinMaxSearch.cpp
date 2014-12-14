@@ -34,52 +34,46 @@ MinMaxSearch::MinMaxSearch(IGoGameHeuristic* heuristic)
     : heuristic_(heuristic) {
 }
 
-const string MinMaxSearch::search(const GoGame& game) const {
-    string winner = "W";
+const string MinMaxSearch::search(const GoGame& game, int maxSteps, int maxDepth) const {
+    string winner = "X";
 
     GoGame currentGame = game;
+
     cout << currentGame.getBoard().toString() << endl;
 
-    while (!currentGame.isFinished()) {
-        set<Board::CellPoint> allMoves = currentGame.getAvailableMoves();
+    bool maxPlayer = true;
 
-        Board::Point bestMove;
-        double bestValue = -std::numeric_limits<double>::max();
-
-        for(set<Board::CellPoint>::iterator move = allMoves.begin();
-                move != allMoves.end(); ++move) {
-
-            const GoGame& nextGame = game.simulateMove(move->point);
-            double moveEstimation = minimax(nextGame, false);
-
-            if (moveEstimation > bestValue) {
-                bestValue = moveEstimation;
-                bestMove = move->point;
-            }
-        }
-
-
-
-        currentGame.makeMove(bestMove);
-
+    while (!currentGame.isFinished() && maxSteps-- > 0) {
+        Board::CellPoint bestMove = minimax(currentGame, maxPlayer, maxDepth).first;
+        currentGame.makeMove(bestMove.point);
+        maxPlayer = !maxPlayer;
         cout << currentGame.getBoard().toString() << endl;
     }
 
     return currentGame.getWinner();
 }
 
-double MinMaxSearch::minimax(GoGame game, bool maxPlayer, int depth) const {
+pair<Board::CellPoint, double> MinMaxSearch::minimax(
+        const GoGame& game, bool maxPlayer, int depth) const {
 
-    static long counter = 0;
+    if (depth == 0) {
+        double estimate = heuristic_->estimate(game);
+        return make_pair(
+                Board::CellPoint(0, 0, Board::CellEmpty),
+                estimate);
+    }
 
     if (game.isFinished()) {
         double estimation = heuristic_->estimate(game);
-        return estimation;
+        return make_pair(
+                Board::CellPoint(0, 0, Board::CellEmpty),
+                estimation);
     }
 
     set<Board::CellPoint> allMoves = game.getAvailableMoves();
 
     double bestValue;
+    Board::CellPoint bestMove(0, 0, Board::CellEmpty);
 
     if (maxPlayer)
         bestValue = -std::numeric_limits<double>::max();
@@ -90,18 +84,21 @@ double MinMaxSearch::minimax(GoGame game, bool maxPlayer, int depth) const {
             move != allMoves.end(); ++move) {
 
         GoGame nextGame = game.simulateMove(move->point);
-        double childValue = minimax(nextGame, !maxPlayer, depth + 1);
+        cout << nextGame.getBoard().toString() << endl;
+        double childValue = minimax(nextGame, !maxPlayer, depth - 1).second;
 
-//        cout << nextGame.getBoard().toString() << endl;
-
-        if (counter++ % 1000000 == 0)
-            cout << counter << " depth = " << depth << endl;
-
-        if (maxPlayer)
-            bestValue = std::max(childValue, bestValue);
+        if (maxPlayer) {
+            if (childValue > bestValue) {
+                bestValue = childValue;
+                bestMove = *move;
+            }
+        }
         else
-            bestValue = std::min(childValue, bestValue);
+            if (childValue < bestValue) {
+                bestValue = childValue;
+                bestMove = *move;
+            }
     }
 
-    return bestValue;
+    return make_pair(bestMove, bestValue);
 }

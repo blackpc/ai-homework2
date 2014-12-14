@@ -30,6 +30,8 @@
 #define INCLUDE_AI_HOMEWORK2_MINMAXSEARCH_H_
 
 
+#include <iostream>
+#include <math.h>
 #include <limits>
 
 #include <ai-homework2/IGoGameHeuristic.h>
@@ -49,7 +51,7 @@ public:
 
 public:
 
-    const string search(const GoGame& game) const;
+    const string search(const GoGame& game, int maxSteps = -1, int maxDepth = -1) const;
 
 private:
 
@@ -57,7 +59,17 @@ private:
 
 private:
 
-    double minimax(GoGame game, bool maxPlayer, int depth = 1) const;
+    pair<Board::CellPoint, double> minimax(const GoGame& game, bool maxPlayer, int depth = -1) const;
+
+private:
+
+    struct CellPointScoreComparator {
+        inline bool operator() (
+                const pair<Board::CellPoint, double>& cell1,
+                const pair<Board::CellPoint, double>& cell2) const {
+            return cell1.second > cell2.second;
+        }
+    };
 
 };
 

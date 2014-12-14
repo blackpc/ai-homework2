@@ -1,7 +1,7 @@
 /**
- * Filename: main.cpp
+ * Filename: BoardReader.h
  *   Author: Igor Makhtes
- *     Date: Dec 12, 2014
+ *     Date: Dec 13, 2014
  *
  * The MIT License (MIT)
  *
@@ -26,42 +26,48 @@
  * THE SOFTWARE.
  */
 
+#ifndef INCLUDE_AI_HOMEWORK2_BOARDREADER_H_
+#define INCLUDE_AI_HOMEWORK2_BOARDREADER_H_
 
-#include <ai-homework2/BoardReader.h>
-#include <ai-homework2/MinMaxSearch.h>
-#include <ai-homework2/MoreChipsHeuristic.h>
+
+#include <iostream>
+#include <fstream>
+
+#include <ai-homework2/Board.h>
 
 
 using namespace std;
 
 
-int main(int argc, char **argv) {
+/*
+ * Reads a board from a file
+ */
+class BoardReader {
 
-    string boardFilename = "input.txt";
+public:
 
-    if (argc > 1)
-        boardFilename = argv[1];
+    /**
+     * Tries to open specified file, and parse the board
+     * @param filename
+     */
+    BoardReader(const string& filename);
 
-    try {
-        BoardReader reader(boardFilename);
-        ofstream outputStream("output.txt");
+public:
 
-        GoGame game(reader.getBoard(), GoGame::TurnBlack);
-        MinMaxSearch searcher(new MoreChipsHeuristic());
+    /**
+     * Gets the parsed board
+     * @return
+     */
+    Board getBoard() const;
 
-        string winner = searcher.search(game, 1, 1);
-        cout << "The winner is: " << winner << endl;
-        outputStream << winner << endl;
-    } catch (const string* e) {
-        cerr << "Exception occurred:" << endl;
-        cerr << *e << endl;
-    } catch (...) {
-        cerr << "Unexpected exception occurred, fuck it." << endl;
-    }
+private:
 
+    Board board_;
 
+private:
 
-	return 1;
-}
+    Board::Cell charToCell(char c) const;
 
+};
 
+#endif /* INCLUDE_AI_HOMEWORK2_BOARDREADER_H_ */

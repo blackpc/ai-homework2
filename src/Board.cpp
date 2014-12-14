@@ -48,9 +48,20 @@ Board::Board(const Board& board) {
         boardArray_[i] = board.boardArray_[i];
 }
 
+void Board::operator =(const Board& board) {
+    this->width_  = board.width_;
+    this->height_ = board.height_;
+
+    boardArray_ = new Cell[width_ * height_];
+
+    for (int i = 0; i < width_ * height_; ++i)
+        boardArray_[i] = board.boardArray_[i];
+}
+
 Board::~Board() {
     delete[] boardArray_;
 }
+
 
 void Board::setCell(int32_t x, int32_t y, Cell cell) {
     boardArray_[width_ * y + x] = cell;

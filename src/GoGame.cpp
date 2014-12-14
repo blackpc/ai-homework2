@@ -98,7 +98,6 @@ set<Board::CellPoint> GoGame::getAvailableMoves() const {
 
 void GoGame::switchCapturedCells(const Board::Point& point, Turn turn) {
     // Search for captured cells in all 4 directions
-
     switchCapturedCellsRecursive(Board::Point(point.x + 1, point.y), turn, 1, 0);
     switchCapturedCellsRecursive(Board::Point(point.x - 1, point.y), turn, -1, 0);
     switchCapturedCellsRecursive(Board::Point(point.x, point.y + 1), turn, 0, 1);

@@ -1,4 +1,5 @@
 .project
 .cproject
+output.txt
 Debug/
 Release/

@@ -122,6 +122,13 @@ public:
 	Board(const Board& board);
 
 	/**
+	 * Assignment operator
+	 * @param board
+	 * @return
+	 */
+	void operator =(const Board& board);
+
+	/**
 	 * Deletes board array
 	 */
 	~Board();
@@ -231,6 +238,21 @@ public:
 	inline int32_t getHeight() const {
         return height_;
     }
+
+	/**
+	 * Switches cell color from black to white and vice versa
+	 * @param cell
+	 * @return
+	 */
+	inline Cell switchCellColor(Cell cell) const {
+	    if (cell == Board::CellBlack)
+	        return Board::CellWhite;
+
+	    if (cell == Board::CellWhite)
+            return Board::CellBlack;
+
+	    return Board::CellEmpty;
+	}
 
 	/**
 	 * Returns string representation of cell
