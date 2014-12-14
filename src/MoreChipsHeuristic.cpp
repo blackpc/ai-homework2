@@ -34,8 +34,5 @@ double MoreChipsHeuristic::estimate(const GoGame& game) const {
     int whites = game.getBoard().getWhiteCellsCount();
     int blacks = game.getBoard().getBlackCellsCount();
 
-    if (game.getTurn() == GoGame::TurnBlack)
-        return blacks - whites;
-
-    return whites - blacks;
+    return blacks - whites;
 }
