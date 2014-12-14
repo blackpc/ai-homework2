@@ -43,7 +43,7 @@ const string MinMaxSearch::search(const GoGame& game, int maxSteps, int maxDepth
 
     bool maxPlayer = true;
 
-    while (!currentGame.isFinished() && maxSteps-- > 0) {
+    while (!currentGame.isFinished() && maxSteps-- != 0) {
         Board::CellPoint bestMove = minimax(currentGame, maxPlayer, maxDepth).first;
         currentGame.makeMove(bestMove.point);
         maxPlayer = !maxPlayer;

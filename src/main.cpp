@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
         GoGame game(reader.getBoard(), GoGame::TurnBlack);
         MinMaxSearch searcher(new MoreChipsHeuristic());
 
-        string winner = searcher.search(game, 1, 1);
+        string winner = searcher.search(game);
         cout << "The winner is: " << winner << endl;
         outputStream << winner << endl;
     } catch (const string* e) {
