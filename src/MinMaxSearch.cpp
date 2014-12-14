@@ -84,7 +84,7 @@ pair<Board::CellPoint, double> MinMaxSearch::minimax(
             move != allMoves.end(); ++move) {
 
         GoGame nextGame = game.simulateMove(move->point);
-        cout << nextGame.getBoard().toString() << endl;
+        
         double childValue = minimax(nextGame, !maxPlayer, depth - 1).second;
 
         if (maxPlayer) {
